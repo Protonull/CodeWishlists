@@ -36,9 +36,9 @@ final String hash; {
 		data = stream.toByteArray();
 	}
 	final MessageDigest md;
-	try {  
-		md = MessageDigest.getInstance("SHA-1");  
-	}  
+	try {
+		md = MessageDigest.getInstance("SHA-1");
+	}
 	catch (final NoSuchAlgorithmException impossible) {
 		throw new IllegalStateException("This should never happen!", impossible);
 	}
@@ -55,13 +55,13 @@ Duh. But I'd be remiss if this went unmentioned.
 These would be classes that only permit static methods and fields, akin to Lombok's [`@UtilityClass`](https://projectlombok.org/features/experimental/UtilityClass), eg:
 ```java
 public namespace Shortcuts {
-	public MessageDigest sha1() {  
-		try {  
-			return MessageDigest.getInstance("SHA-1");  
-		}  
-		catch (final NoSuchAlgorithmException impossible) {  
-			throw new IllegalStateException("This should never happen!", impossible);  
-		}  
+	public MessageDigest sha1() {
+		try {
+			return MessageDigest.getInstance("SHA-1");
+		}
+		catch (final NoSuchAlgorithmException impossible) {
+			throw new IllegalStateException("This should never happen!", impossible);
+		}
 	}
 }
 ```
@@ -72,7 +72,7 @@ Java is actually pursuing this with [JEP 8261007](https://openjdk.org/jeps/82610
 ## Tuples
 While this can be achieved with records and other such classes, it would be nice if it were an ergonomic part of the language, where you could simply do:
 ```java
-pubic [int, int] getPosition() {
+public [int, int] getPosition() {
 	return [getX(), getY()];
 } 
 ```
@@ -80,10 +80,9 @@ pubic [int, int] getPosition() {
 ## Destructuring
 Java is pursuing destructuring ([JEP 440](https://openjdk.org/jeps/440)), but it's currently limited to record instanceof patterns, as opposed to turning this:
 ```java
-// Instead of doing this
-for (final var entry : map.entrySet()) {  
-	final var key = entry.getKey();  
-	final var value = entry.getValue();  
+for (final var entry : map.entrySet()) {
+	final var key = entry.getKey();
+	final var value = entry.getValue();
 }
 ```
 into this:
