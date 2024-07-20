@@ -8,7 +8,7 @@ Java has a number of available build tools, but these tools never use *Java* for
 Obviously, it would be nice if nullability were part of the type system itself, and there is *some* movement towards this with [JEP 8316779](https://openjdk.org/jeps/8316779), but Java is sorely lacking ergonomic ways of handling nulls, such as [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining), [nullish coalescence](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing), and [nullish reassignment](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_assignment). What is `Objects.toString(something, "default")` other than a clutter of bytecode because we are unable to simply do `something?.toString() ?? "default"`?
 
 ## Ergonomic Catching
-Java's exception handling is bulky and annoying. For example, `MessageDigest.getInstance("SHA-1")` will never fail as it's a required algorithm for all JVM implentations, and yet you must surround it with a try-catch for the `NoSuchAlgorithmException` exception. This, again, just means more bytecode clutter. Imagine if Java added Zig-style catching, letting you do:
+Java's exception handling is bulky and annoying. For example, `MessageDigest.getInstance("SHA-1")` will never fail as it's a required algorithm for all JVM implementations, and yet you must surround it with a try-catch for the `NoSuchAlgorithmException` exception. This, again, just means more bytecode clutter. Imagine if Java added Zig-style catching, letting you do:
 ```java
 final MessageDigest md = MessageDigest.getInstance("SHA-1") catch unreachable;
 ```
