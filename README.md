@@ -2,13 +2,13 @@
 Just a list of various things that I wish Java had.
 
 ## Java-based Build System
-Java has a number of available build tools, but these tools never use *Java* for its configuration: Gradle uses Kotlin/Groovy, Ant and Maven use XML, and Bazel uses [Starlark](https://github.com/bazelbuild/starlark). And going back to javac more than likely means configuring your build in bash or make. It's like these tools are doing everything they can to avoid using Java. This is in stark contrast to Zig where you configure your build *in Zig.* Hopefully [JEP 330](https://openjdk.org/jeps/330) and [JEP 458](https://openjdk.org/jeps/458) help move the needle here.
+Java has a number of available build tools, but these tools never use *Java* for its configuration: Gradle uses Kotlin/Groovy, Ant and Maven use XML, and Bazel uses [Starlark](https://github.com/bazelbuild/starlark). And going back to javac more than likely means configuring your build in bash or make. It's like these tools are actively avoiding Java. This is in stark contrast to Zig where you configure your build *in Zig.* Hopefully [JEP 330](https://openjdk.org/jeps/330) and [JEP 458](https://openjdk.org/jeps/458) help move the needle here.
 
 ## Ergonomic Null Safety
-Obviously, it would be nice if nullability were part of the type system itself, and there is some movement towards that with [JEP 8316779](https://openjdk.org/jeps/8316779), but Java is sorely lacking ergonomic ways of dealing with nulls such as [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining), [nullish coalescence](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing), and [nullish reassignment](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_assignment). What is `Objects.toString(something, "default")` other than a clutter of bytecode because we are unable to simply do `something?.toString() ?? "default"`?
+Obviously, it would be nice if nullability were part of the type system itself, and there is *some* movement towards this with [JEP 8316779](https://openjdk.org/jeps/8316779), but Java is sorely lacking ergonomic ways of handling nulls, such as [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining), [nullish coalescence](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing), and [nullish reassignment](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_assignment). What is `Objects.toString(something, "default")` other than a clutter of bytecode because we are unable to simply do `something?.toString() ?? "default"`?
 
-## Ergonomic Exception Handling
-Java's exception handling is bulky and annoying. For example, `MessageDigest.getInstance("SHA-1")` will never fail as it's an algorithm that's required for all JVMs to implement, and yet you must surround it with a try-catch for the `NoSuchAlgorithmException` exception. This, again, just means more bytecode clutter. Imagine if Java added Zig-style error handling, letting you do:
+## Ergonomic Catching
+Java's exception handling is bulky and annoying. For example, `MessageDigest.getInstance("SHA-1")` will never fail as it's a required algorithm for all JVM implentations, and yet you must surround it with a try-catch for the `NoSuchAlgorithmException` exception. This, again, just means more bytecode clutter. Imagine if Java added Zig-style catching, letting you do:
 ```java
 final MessageDigest md = MessageDigest.getInstance("SHA-1") catch unreachable;
 ```
@@ -21,8 +21,8 @@ new Thread(() -> {
 });
 ```
 
-## Extracting Primitives from Arrays
-You have a `byte[]` and want to extract an `int` at a particular offset (or set an `int` at a particular offset), this should be simple, right? Unfortunately, Java provides no [non-[internal](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/jdk/internal/util/ByteArray.java)] static APIs to achieve this. Instead, you must wrap the array in a `ByteBuffer` and use its instances methods... for some reason. This to me is an example of OOP brainrot. You already have the array and the offset of the integer, why does an object and all its internal-context objects need to be allocated for this one task? Genuinely, why?
+## Extracting Primitives from Byte Arrays
+You have a `byte[]` and want to extract an `int` at a particular offset (or set an `int` at a particular offset), this should be simple, right? Unfortunately not, as while there's a [internal static API](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/jdk/internal/util/ByteArray.java) for this, there's no public static API, so end users are required to use wrapper classes like `ByteBuffer` and call instance methods. This is wasteful. You already have the array and the offset of the integer, why does an object and all its internal-context objects need to be allocated for this one task? Genuinely, why?
 
 ## Yielding Values from Blocks
 Java has [relevant to this discussion] static blocks, initialisation blocks, and anonymous blocks, but you are unable to yield values from these blocks. That said, Java *does* let you do something somewhat equivalent, such as:
