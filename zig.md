@@ -49,10 +49,10 @@ Many times I've encountered instances where a function parameter is `anytype` an
 There are various ideas on how to fix this, I personally like [this suggestion](https://github.com/ziglang/zig/issues/17198#issuecomment-2533468501), but overall I'd just love a Rust-like trait-impl system.
 
 ## Explicit Runtime Execution
-Zig has `comptime`, which allows you to force compile-time computation (with limitations, of course) where something would usually be done at runtime. I am asking for the opposite, for a way to force runtime-compuation for something that would be done at compile time (with likely similar limitations, of course). For example:
+Zig has `comptime`, which allows you to force compile-time computation (with limitations, of course) where something would usually be done at runtime. I am asking for the opposite, for a way to force runtime-computation for something that would be done at compile time (with likely similar limitations, of course). For example:
 ```zig
 // This is a top-level hash-map that has some initial values
-// and can be expanded at runtime.
+// and can be further added to at runtime, like a registry.
 const example = lazy createSomeHashMapThatRequiresAllocation();
 ```
 This would mean that the "example" variable is known to exist and its type is know, and it's constant, but its value is only set upon first access.

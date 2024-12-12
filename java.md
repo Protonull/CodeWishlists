@@ -2,10 +2,10 @@
 Just a list of various things that I wish Java had.
 
 ## Java-based Build System
-Java has a number of available build tools, but these tools never use *Java* for its configuration: Gradle uses Kotlin/Groovy, Ant and Maven use XML, and Bazel uses [Starlark](https://github.com/bazelbuild/starlark). And going back to javac more than likely means configuring your build in bash or make. It's like these tools are actively avoiding Java. This is in stark contrast to Zig where you configure your build *in Zig.* Hopefully [JEP 330](https://openjdk.org/jeps/330) and [JEP 458](https://openjdk.org/jeps/458) help move the needle here.
+Java has a number of available build tools, but these tools never use *Java* for its configuration: Gradle uses [Kotlin](https://kotlinlang.org/)/[Groovy](https://groovy-lang.org/), Ant and Maven use [XML](https://www.w3.org/XML/), and Bazel uses [Starlark](https://github.com/bazelbuild/starlark). And going back to javac more than likely means configuring your build in bash or make. It's like these tools are actively avoiding Java. This is in stark contrast to Zig where you configure your build *in Zig.* Hopefully [JEP 330](https://openjdk.org/jeps/330) and [JEP 458](https://openjdk.org/jeps/458) help move the needle here.
 
 ## Ergonomic Null Safety
-Obviously, it would be nice if nullability were part of the type system itself, and there is *some* movement towards this with [JEP 8316779](https://openjdk.org/jeps/8316779), but Java is sorely lacking ergonomic ways of handling nulls, such as [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining), [nullish coalescence](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing), and [nullish reassignment](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_assignment). What is `Objects.toString(something, "default")` other than a clutter of bytecode because we are unable to simply do `something?.toString() ?? "default"`?
+While Java is pursing nullability as part of the type system itself with JEPs [8316779](https://openjdk.org/jeps/8316779) and [8303099](https://openjdk.org/jeps/8303099), Java nonetheless sorely lacks ergonomic ways of handling nulls, such as [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining), [nullish coalescence](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing), and [nullish reassignment](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_assignment). What is `Objects.toString(something, "default")` other than a clutter of bytecode because we are unable to simply do `something?.toString() ?? "default"`? The latter is not only more readable, in my opinion, but also more efficient since `"default"` isn't allocated until `something` is found to be null.
 
 ## Ergonomic Catching
 Java's exception handling is bulky and annoying. For example, `MessageDigest.getInstance("SHA-1")` will never fail as it's a required algorithm for all JVM implementations, and yet you must surround it with a try-catch for the `NoSuchAlgorithmException` exception. This, again, just means more bytecode clutter. Imagine if Java added Zig-style catching, letting you do:
@@ -16,7 +16,7 @@ or
 ```java
 new Thread(() -> {
 	while (Thread.interrupted()) {
-		Thread.sleep(1000) catch continue;
+		Thread.sleep(1000) catch break;
 	}
 });
 ```
