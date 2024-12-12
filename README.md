@@ -3,3 +3,4 @@
 Just a list of various things that I wish these languages had:
 
 - [Java](./JAVA.md)
+- [Zig](./ZIG.md)
