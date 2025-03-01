@@ -158,3 +158,33 @@ for (final [key, value] : map.entrySet()) {
 
 }
 ```
+
+## Direct field references
+There are times when a Java library requires some kind of 'accessor' class, for want of a better term, which has a getter and setter method, delegating to you where the value should reside. Except there's no real way to abstract this if it's just some field somewhere.
+
+Let's take [YACL](https://modrinth.com/mod/yacl) for example, a config-library mod for Minecraft:
+```java
+// This is a pretty typical option for the YACL config screen.
+return Option.<Color>createBuilder()
+    .name(Component.literal("Text Colour"))
+    .controller(ColorControllerBuilder::create)
+    .binding(
+        DEFAULT_TEXT_COLOUR,
+        // The value is a static-volatile field on RenderHelpers
+        () -> RenderHelpers.textColour,
+        (colour) -> RenderHelpers.textColour = colour
+    )
+    .build();
+```
+When someone sets the colour value within the config screen, the setter in the `.binding()` is called. It's also possible to pass in a `Binding` implementation that has a getter, setter, and default-getter method. So imagine if you could do:
+```java
+return Option.<Color>createBuilder()
+    .name(Component.literal("Text Colour"))
+    .controller(ColorControllerBuilder::create)
+    .binding(FieldDelegateBinding.of(
+        RenderHelpers.&textColour,
+        DEFAULT_TEXT_COLOUR
+    ))
+    .build();
+```
+Where you can just reference the field itself. The closest to this I can find are VarHandles, but this has its own issues. The ideal with direct-field references is that any operations on them would be as they would ordinarily, as in, if the field is volatile, any assignment to the field would also be volatile. This is not true with VarHandles as it's something you must do manually.
