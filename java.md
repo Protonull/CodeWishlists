@@ -188,3 +188,49 @@ return Option.<Color>createBuilder()
     .build();
 ```
 Where you can just reference the field itself. The closest to this I can find are VarHandles, but this has its own issues. The ideal with direct-field references is that any operations on them would be as they would ordinarily, as in, if the field is volatile, any assignment to the field would also be volatile. This is not true with VarHandles as it's something you must do manually.
+
+# Explicit satisfaction instanceofs and switches
+
+[JEP 8349215](https://openjdk.org/jeps/8349215) introduces the previously mentioned "satisfies" side effect. Consider the following code:
+```java
+final float example = 2.0f;
+switch (example) {
+    case final int value -> System.out.println("int: " + value);
+    default -> System.out.println("NOT INT: " + example);
+}
+```
+The output will be `int: 2`, because that float can satisfactorily be cast to an int. This has concerning implications for 'capturing default cases', but this has interesting implications for parsing. Imagine being able to do the following:
+```java
+public final class Config {
+    public final int PORT = switch (System.getenv("PORT")) {
+        case final int port when port >= 0 && port <= 65535 -> port;
+        case null -> 8080; // Some default
+        default -> System.out.println("INVALID PORT!");
+    };
+}
+```
+Where the string returned by `System.getenv("PORT")` is tested to see whether it can satisfactorily be converted into an int, and if so, then use that. *(This is also a pretty good example to reinforce why I want capturing default cases.)*
+
+Java developers would be able to write satisfaction methods, akin to `equals()` but static. Or perhaps more equivalent to `serialVersionUID`. But this method would resemble something like:
+```java
+class int {
+    public static Optional<int> satisfiesInstanceOf(
+        final Any value // presumed new 'any' type after Project Valhalla
+    ) {
+        return switch (value) {
+            case final int value -> Optional.of(value); // It's already an int
+            case final String raw -> {
+                try {
+                    return Optional.of(Integer.valueOf(raw));
+                }
+                catch (final NumberFormatException _) {
+                    return Optional.empty();
+                }
+            }
+            default -> Optional.empty();
+        };
+    }
+}
+```
+*(The compiler would be smart enough to know that doing a switch-instanceof of a type within that type's 'satisfies' method will not cause a recursive call, because an int is an int, it's not 'satisfactorily' an int.)*
+
