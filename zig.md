@@ -2,23 +2,6 @@
 # Zig Wishlist
 Just a list of various things that I wish Zig had.
 
-## Yeild Blocks
-While Zig does have yieldable blocks, they're unnecessarily verbose:
-```zig
-const example: i32 = brk: {
-	const raw = "364";
-	break :brk std.fmt.parseInt(i32, raw, 10);
-};
-```
-whereas I advocate for something like the following:
-```zig
-const example: i32 = produce {
-	const raw = "364";
-	yield std.fmt.parseInt(i32, raw, 10);
-};
-```
-The `produce` keyword is optional. I figure this is a nice compromise, similar to how `try` is shorthand for `catch |err| return err;`
-
 ## Try Blocks
 While you are able to do a scuffed version of try-blocks, they are also unnecessarily verbose, nor do they work with `try`:
 ```zig
