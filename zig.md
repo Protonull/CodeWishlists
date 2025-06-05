@@ -3,7 +3,7 @@
 Just a list of various things that I wish Zig had.
 
 ## Anonymous Functions
-This is another thing where Zig technically has it, but it's *[deliberately](https://github.com/ziglang/zig/issues/1717#issuecomment-1627790251)* obnoxious. I am not asking for closures, but Zig is already littered with structs that expect functions as fields. It would be nice to be able to just write a function inline, rather than as a sibling function elsewhere in the code, or as the following monstrosity:
+Zig technically has this, but it's being kept *[deliberately](https://github.com/ziglang/zig/issues/1717#issuecomment-1627790251)* obnoxious. I am not asking for closures, but Zig's standard library is already littered with APIs that expect functions as fields and parameters. Not to mention community-made libraries. It would be nice to be able to just write a function inline, rather than as a sibling function elsewhere in the code, or as the following monstrosity:
 ```zig
 const example: SomeStruct = .{
 	.sortFn = (struct {
@@ -13,7 +13,6 @@ const example: SomeStruct = .{
 	}).sort,
 };
 ```
-And here's an real-life example of it: [tardy](https://github.com/tardy-org/tardy/blob/c07afd03b8d573cc95a07c1e7a73237502ff94e2/examples/echo/main.zig#L70-L74).
 
 ## Explicit errdefer invocation
 In the ["The Road to Zig 1.0"](https://www.youtube.com/watch?v=Gv2I7qTux7g) video, Andrew framed Zig as "C but with the problems fixed", as opposed to C++ with its overabundance of features. But I would argue that the introduction of error types very much disqualifies Zig as being *just C but better.* This is made most obvious when trying to interface with C (such as passing a C library a callback function) and basically losing most of Zig's language features, notably `errdefer`.
@@ -35,7 +34,7 @@ export fn foo(arg: ?*anyopaque) callconv(.c) c_int {
 }
 ```
 
-And so we're stuck defining duplicate functions, causing a blast radius of litter functions in our code. And ultimately I feel like this was all so Andrew could add `try` because he didn't want to keep doing:
+And so we're stuck defining duplicate functions, causing a blast radius of litter-functions in our code. And ultimately I feel like this was all so Andrew could add `try` because he didn't want to keep doing:
 ```c
 if (doSomething() == -1) {
     return -1;
@@ -68,7 +67,7 @@ export fn foo(arg: ?*anyopaque) callconv(.c) c_int {
 This will mean that a `-1` is returned from the function, but all relevant `errdefer` blocks are invoked. It does seem a little odd that the *only* way `errdefer` works is to propagate the error upwards.
 
 ## Interfaces
-Many times I've encountered instances where a function parameter is `anytype` and yet is not checked but used immediately as if it's a very particular type. Take for example [this format function](https://github.com/nektro/zig-time/blob/e946a144423cdb5dac3d46d6856c6e6da73e9305/time.zig#L218) in the [zig-time](https://github.com/nektro/zig-time) library. Why is it like that? Well, because interfaces don't exist in Zig yet, so the language has imported some of JavaScript's "just treat it like it's the correct type anyway" issues. At least it's not anyopaque, so *some* level of analysis is possible, but there's no need for the language to *effectively* require type-coyness like this.
+Many times I've encountered instances where a function parameter is `anytype` and yet is not checked but used immediately as if it's a very particular type. Take for example [this format function](https://github.com/nektro/zig-time/blob/e946a144423cdb5dac3d46d6856c6e6da73e9305/time.zig#L218) in the [zig-time](https://github.com/nektro/zig-time) library. Why is it like that? Well, because interfaces don't exist in Zig yet, so the language has imported some of JavaScript's "just treat it like it's the correct type anyway" issues. At least it's not `anyopaque`, so *some* level of analysis is possible, but there's no need for the language to *effectively* require type-coyness like this.
 
 There are various ideas on how to fix this, I personally like [this suggestion](https://github.com/ziglang/zig/issues/17198#issuecomment-2533468501), but overall I'd just love a Rust-like trait-impl system.
 
