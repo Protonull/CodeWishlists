@@ -5,3 +5,4 @@ Just a list of various things that I wish these languages had:
 - [Java](./java.md)
 - [Zig](./zig.md)
 - [Dart](./dart.md)
+- [D](./d.md)
